@@ -1,3 +1,7 @@
+parsers/*.js
+parser-grammars/*.y
+
+
 # Logs
 logs
 *.log
