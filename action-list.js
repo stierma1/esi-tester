@@ -225,6 +225,11 @@ module.exports = {
     "arity": 3,
     "action": "htmlComment"
   },
+  "ieDirective": {
+    "productions": "\"<!--[if lte IE 8]>\" maybeHtmlDom \"<![endif]-->\"",
+    "arity": 3,
+    "action": "ieDirective"
+  },
   "maybeHtmlDomNonTagedString": {
     "productions": "nonTagedString",
     "arity": 1,
@@ -260,6 +265,11 @@ module.exports = {
     "arity": 3,
     "action": "maybeHtmlDomStyleDomElement"
   },
+  "maybeHtmlDomIEDirective": {
+    "productions": "maybeHtmlDom ieDirective nonTagedString",
+    "arity": 3,
+    "action": "maybeHtmlDomIEDirective"
+  },
   "htmlDomElementSelfClose": {
     "productions": "htmlVoidTagHead",
     "arity": 1,
@@ -282,12 +292,12 @@ module.exports = {
     "action": "jsString"
   },
   "scriptTagElement": {
-    "productions": "\"<script\" scriptTagTail",
+    "productions": "\"<SCRIPT\" scriptTagTail",
     "arity": 2,
     "action": "scriptTagElement"
   },
   "scriptTagTailContent": {
-    "productions": "attributeStartClose jsString \"</script\" optionalWhiteSpaceString \">\"",
+    "productions": "attributeStartClose jsString \"</SCRIPT\" optionalWhiteSpaceString \">\"",
     "arity": 5,
     "action": "scriptTagTailContent"
   },
