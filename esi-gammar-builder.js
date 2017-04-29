@@ -70,7 +70,7 @@ function fillActions(actions, errors) {
 "/>"                  return "/>"
 "<"                   return '<'
 ">"                   return '>'
-"/"                   return '/'
+"/"                   return 'SLASH'
 "\\\\\\\\"                return 'FULLY_ESCAPED'
 "\\\\"                  return 'ESCAPE_PUNC'
 ["]                  return 'DOUBLE_QUOTE'
@@ -78,6 +78,7 @@ function fillActions(actions, errors) {
 ":"                   return ':'
 "="                   return '='
 "\."                   return "DOT"
+"+"                   return "+"
 (.)                   return 'Unknown_Char'
 <<EOF>>               return 'EOF'
 
@@ -211,7 +212,7 @@ nonTagedString
 	: /**/ ${actions.nonTagedStringEpsilon || "{}"}
 	| nonTagedString White_Space_Char ${actions.nonTagedString || "{}"}
 	| nonTagedString ESCAPE_PUNC ${actions.nonTagedString || "{}"}
-	| nonTagedString "/" ${actions.nonTagedString || "{}"}
+	| nonTagedString SLASH ${actions.nonTagedString || "{}"}
 	| nonTagedString ":" ${actions.nonTagedString || "{}"}
 	| nonTagedString "=" ${actions.nonTagedString || "{}"}
 	| nonTagedString ASCII_Digit ${actions.nonTagedString || "{}"}
@@ -222,12 +223,13 @@ nonTagedString
 	| nonTagedString DOUBLE_QUOTE ${actions.nonTagedString || "{}"}
 	| nonTagedString FULLY_ESCAPED ${actions.nonTagedString || "{}"}
 	| nonTagedString DOT ${actions.nonTagedString || "{}"}
+	| nonTagedString "+" ${actions.nonTagedString || "{}"}
 	;
 
 escapedChar
 		: ESCAPE_PUNC ">" ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC "<" ${actions.escapedChar || "{}"}
-		| ESCAPE_PUNC "/" ${actions.escapedChar || "{}"}
+		| ESCAPE_PUNC SLASH ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC ":" ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC "=" ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC keyword ${actions.escapedChar || "{}"}
@@ -238,6 +240,7 @@ escapedChar
 		| ESCAPE_PUNC Unknown_Char ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC HYPHON ${actions.escapedChar || "{}"}
 		| ESCAPE_PUNC DOT ${actions.escapedChar || "{}"}
+		| ESCAPE_PUNC "+" ${actions.escapedChar || "{}"}
 		;
 
 escapedSQuote
@@ -248,7 +251,7 @@ anyNonDoubleQEscapeBreakingString
 	: /**/ ${actions.anyNonDoubleQEscapeBreakingStringEpsilon || "{}"}
 	| anyNonDoubleQEscapeBreakingString ">" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString "<" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
-	| anyNonDoubleQEscapeBreakingString "/" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
+	| anyNonDoubleQEscapeBreakingString SLASH ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString ":" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString "=" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString keyword ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
@@ -262,13 +265,14 @@ anyNonDoubleQEscapeBreakingString
 	| anyNonDoubleQEscapeBreakingString FULLY_ESCAPED ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString HYPHON ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	| anyNonDoubleQEscapeBreakingString DOT ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
+	| anyNonDoubleQEscapeBreakingString "+" ${actions.anyNonDoubleQEscapeBreakingString || "{}"}
 	;
 
 anyNonSingleQEscapeBreakingString
 		: /**/ ${actions.anyNonSingleQEscapeBreakingStringEpsilon || "{}"}
 		| anyNonSingleQEscapeBreakingString ">" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString "<" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
-		| anyNonSingleQEscapeBreakingString "/" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
+		| anyNonSingleQEscapeBreakingString SLASH ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString ":" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString "=" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString keyword ${actions.anyNonSingleQEscapeBreakingString || "{}"}
@@ -282,6 +286,7 @@ anyNonSingleQEscapeBreakingString
 		| anyNonSingleQEscapeBreakingString FULLY_ESCAPED ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString HYPHON ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		| anyNonSingleQEscapeBreakingString DOT ${actions.anyNonSingleQEscapeBreakingString || "{}"}
+		| anyNonSingleQEscapeBreakingString "+" ${actions.anyNonSingleQEscapeBreakingString || "{}"}
 		;
 
 escapedString
@@ -296,7 +301,7 @@ optionalWhiteSpaceString
 
 optionalSlash
 	: /**/ ${actions.optionalSlashEpsilon || "{}"}
-	| "/" ${actions.optionalSlash || "{}"}
+	| SLASH ${actions.optionalSlash || "{}"}
 	;
 
 whiteSpaceString
@@ -320,6 +325,8 @@ unicodeAlphaNumHyph
 	| unicodeAlphaNumHyph HYPHON ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
 	| unicodeAlphaNumHyph DOT ASCII_Digit ${actions.unicodeAlphaNumHyphHyphenDigitSeq || "{}"}
 	| unicodeAlphaNumHyph DOT ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
+	| unicodeAlphaNumHyph "+" ASCII_Digit ${actions.unicodeAlphaNumHyphHyphenDigitSeq || "{}"}
+	| unicodeAlphaNumHyph "+" ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
 	;
 
 initialFirstUnicodeAlphanumeric
@@ -332,6 +339,7 @@ initialFirstAlphaNumHyph
 	| ASCII_Initial_Char unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphSeq || "{}"}
 	| ASCII_Initial_Char HYPHON unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
 	| ASCII_Initial_Char DOT unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
+	| ASCII_Initial_Char "+" unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
 	;
 
 docTypeTag
@@ -445,7 +453,7 @@ jsStringToken
 	| "/>"
 	| "<"
 	| ">"
-	| "/"
+	| SLASH
 	| FULLY_ESCAPED
 	| ESCAPE_PUNC
 	| DOUBLE_QUOTE
@@ -454,6 +462,7 @@ jsStringToken
 	| "="
 	| Unknown_Char
 	| DOT
+	| "+"
 	;
 
  jsString
@@ -519,7 +528,7 @@ cssStringToken
 	| "/>"
 	| "<"
 	| ">"
-	| "/"
+	| SLASH
 	| FULLY_ESCAPED
 	| ESCAPE_PUNC
 	| DOUBLE_QUOTE
@@ -528,6 +537,7 @@ cssStringToken
 	| "="
 	| Unknown_Char
 	| DOT
+	| "+"
 	;
 
  cssString
@@ -554,7 +564,7 @@ escapedAttribute
 
 unEscapedAttribute
 		: initialFirstAlphaNumHyph ${actions.unEscapedAttributeKeyOnly || "{}"}
-		| initialFirstAlphaNumHyph "=" unicodeAlphanumeric ${actions.unEscapedAttributeKeyValue || "{}"}
+		| initialFirstAlphaNumHyph "=" nonWhiteSpaceNonQuoteString ${actions.unEscapedAttributeKeyValue || "{}"}
 		;
 
 attributeTailSelfClose
@@ -595,6 +605,28 @@ attributeStartVoid
 		| optionalWhiteSpaceString "/>" ${actions.attributeStartVoidNoAttributes || "{}"}
 		| whiteSpaceString attributeTailVoid ${actions.attributeStartVoidAttributes || "{}"}
 		;
+
+nonWhiteSpaceNonQuoteString
+		: nonWhiteSpaceNonQuote
+		| nonWhiteSpaceNonQuote nonWhiteSpaceNonQuoteString  ${actions.nonWhiteSpaceNonQuoteString || "{}"}
+	 ;
+
+nonWhiteSpaceNonQuote
+				: ASCII_Digit
+				| ASCII_Initial_Char
+				| HYPHON
+				| SLASH
+				| FULLY_ESCAPED
+				| ESCAPE_PUNC
+				| ":"
+				| Unknown_Char
+				| DOT
+				| "+"
+				| "<"
+				| ";"
+				| "="
+				;
+
 `
 }
 

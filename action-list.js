@@ -16,12 +16,12 @@ module.exports = {
     "action": "nonTagedStringEpsilon"
   },
   "nonTagedString": {
-    "productions": "nonTagedString FULLY_ESCAPED",
+    "productions": "nonTagedString \"+\"",
     "arity": 2,
     "action": "nonTagedString"
   },
   "escapedChar": {
-    "productions": "ESCAPE_PUNC HYPHON",
+    "productions": "ESCAPE_PUNC \"+\"",
     "arity": 2,
     "action": "escapedChar"
   },
@@ -37,7 +37,7 @@ module.exports = {
     "action": "anyNonDoubleQEscapeBreakingStringEpsilon"
   },
   "anyNonDoubleQEscapeBreakingString": {
-    "productions": "anyNonDoubleQEscapeBreakingString HYPHON",
+    "productions": "anyNonDoubleQEscapeBreakingString \"+\"",
     "arity": 2,
     "action": "anyNonDoubleQEscapeBreakingString"
   },
@@ -48,7 +48,7 @@ module.exports = {
     "action": "anyNonSingleQEscapeBreakingStringEpsilon"
   },
   "anyNonSingleQEscapeBreakingString": {
-    "productions": "anyNonSingleQEscapeBreakingString HYPHON",
+    "productions": "anyNonSingleQEscapeBreakingString \"+\"",
     "arity": 2,
     "action": "anyNonSingleQEscapeBreakingString"
   },
@@ -75,7 +75,7 @@ module.exports = {
     "action": "optionalSlashEpsilon"
   },
   "optionalSlash": {
-    "productions": "\"/\"",
+    "productions": "SLASH",
     "arity": 1,
     "action": "optionalSlash"
   },
@@ -130,12 +130,12 @@ module.exports = {
     "action": "unicodeAlphaNumHyphInitialSeq"
   },
   "unicodeAlphaNumHyphHyphenDigitSeq": {
-    "productions": "unicodeAlphaNumHyph HYPHON ASCII_Digit",
+    "productions": "unicodeAlphaNumHyph \"+\" ASCII_Digit",
     "arity": 3,
     "action": "unicodeAlphaNumHyphHyphenDigitSeq"
   },
   "unicodeAlphaNumHyphHyphenInitialSeq": {
-    "productions": "unicodeAlphaNumHyph HYPHON ASCII_Initial_Char",
+    "productions": "unicodeAlphaNumHyph \"+\" ASCII_Initial_Char",
     "arity": 3,
     "action": "unicodeAlphaNumHyphHyphenInitialSeq"
   },
@@ -160,7 +160,7 @@ module.exports = {
     "action": "initialFirstAlphaNumHyphSeq"
   },
   "initialFirstAlphaNumHyphHyphonSeq": {
-    "productions": "ASCII_Initial_Char HYPHON unicodeAlphaNumHyph",
+    "productions": "ASCII_Initial_Char \"+\" unicodeAlphaNumHyph",
     "arity": 3,
     "action": "initialFirstAlphaNumHyphHyphonSeq"
   },
@@ -227,7 +227,7 @@ module.exports = {
   },
   "ieDirective": {
     "productions": "\"<!--[if lte IE 8]>\" maybeHtmlDom \"<![endif]-->\"",
-    "arity": 3,
+    "arity": 6,
     "action": "ieDirective"
   },
   "maybeHtmlDomNonTagedString": {
@@ -348,7 +348,7 @@ module.exports = {
     "action": "unEscapedAttributeKeyOnly"
   },
   "unEscapedAttributeKeyValue": {
-    "productions": "initialFirstAlphaNumHyph \"=\" unicodeAlphanumeric",
+    "productions": "initialFirstAlphaNumHyph \"=\" nonWhiteSpaceNonQuoteString",
     "arity": 3,
     "action": "unEscapedAttributeKeyValue"
   },
@@ -427,5 +427,10 @@ module.exports = {
     "productions": "whiteSpaceString attributeTailVoid",
     "arity": 2,
     "action": "attributeStartVoidAttributes"
+  },
+  "nonWhiteSpaceNonQuoteString": {
+    "productions": "nonWhiteSpaceNonQuote nonWhiteSpaceNonQuoteString",
+    "arity": 2,
+    "action": "nonWhiteSpaceNonQuoteString"
   }
 }

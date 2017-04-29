@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/stierma1/esi-tester#readme",
   "dependencies": {
-    "jison": "^0.4.17"
+    "jison": "^0.4.17",
+    "js-beautify": "^1.6.12"
   }
 }
