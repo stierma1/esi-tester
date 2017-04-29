@@ -130,12 +130,12 @@ module.exports = {
     "action": "unicodeAlphaNumHyphInitialSeq"
   },
   "unicodeAlphaNumHyphHyphenDigitSeq": {
-    "productions": "unicodeAlphaNumHyph \"+\" ASCII_Digit",
+    "productions": "unicodeAlphaNumHyph \":\" ASCII_Digit",
     "arity": 3,
     "action": "unicodeAlphaNumHyphHyphenDigitSeq"
   },
   "unicodeAlphaNumHyphHyphenInitialSeq": {
-    "productions": "unicodeAlphaNumHyph \"+\" ASCII_Initial_Char",
+    "productions": "unicodeAlphaNumHyph \":\" ASCII_Initial_Char",
     "arity": 3,
     "action": "unicodeAlphaNumHyphHyphenInitialSeq"
   },
@@ -160,7 +160,7 @@ module.exports = {
     "action": "initialFirstAlphaNumHyphSeq"
   },
   "initialFirstAlphaNumHyphHyphonSeq": {
-    "productions": "ASCII_Initial_Char \"+\" unicodeAlphaNumHyph",
+    "productions": "ASCII_Initial_Char \":\" unicodeAlphaNumHyph",
     "arity": 3,
     "action": "initialFirstAlphaNumHyphHyphonSeq"
   },
@@ -221,14 +221,20 @@ module.exports = {
     "action": "htmlVoidTagHead"
   },
   "htmlComment": {
-    "productions": "\"<!--\" maybeHtmlDom \"-->\"",
+    "productions": "\"<!--\" commentString \"-->\"",
     "arity": 3,
     "action": "htmlComment"
   },
-  "ieDirective": {
-    "productions": "\"<!--[if lte IE 8]>\" maybeHtmlDom \"<![endif]-->\"",
-    "arity": 6,
-    "action": "ieDirective"
+  "commentEpsilon": {
+    "productions": "/**/",
+    "arity": 0,
+    "symbols": [],
+    "action": "commentEpsilon"
+  },
+  "comment": {
+    "productions": "commentString White_Space_Char",
+    "arity": 2,
+    "action": "comment"
   },
   "maybeHtmlDomNonTagedString": {
     "productions": "nonTagedString",
@@ -264,11 +270,6 @@ module.exports = {
     "productions": "maybeHtmlDom styleTagElement nonTagedString",
     "arity": 3,
     "action": "maybeHtmlDomStyleDomElement"
-  },
-  "maybeHtmlDomIEDirective": {
-    "productions": "maybeHtmlDom ieDirective nonTagedString",
-    "arity": 3,
-    "action": "maybeHtmlDomIEDirective"
   },
   "htmlDomElementSelfClose": {
     "productions": "htmlVoidTagHead",

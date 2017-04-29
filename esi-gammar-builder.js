@@ -9,14 +9,18 @@ function fillActions(actions, errors) {
 %lex
 %%
 
-"<![endif]-->"        return "<![endif]-->"
-"<!--[if lte IE 8]>"  return "<!--[if lte IE 8]>"
 [ \\n\\t\\r]               return 'White_Space_Char'
+"<![if gt IE 6]>"				return "White_Space_Char"
+"<![endif]>"							return "White_Space_Char"
+"<!endif>"							return "White_Space_Char"
 "-->"                 return "-->"
 "<!--"                return "<!--"
 "<!DOCTYPE"             return "<!DOCTYPE"
+"<!doctype"             return "<!DOCTYPE"
 "<div"                  return "<div"
 "</div"                 return "</div"
+"<DIV"                  return "<div"
+"</DIV"                 return "</div"
 "<esi:include"         return '<esi:include'
 "<esi:return"         return '<esi:return'
 "<esi:assign"          return '<esi:assign'
@@ -46,10 +50,12 @@ function fillActions(actions, errors) {
 "</esi:when"            return '</esi:when'
 "<script"             return "<script"
 "</script"              return "</script"
-"<SCRIPT"             return "<SCRIPT"
-"</SCRIPT"              return "</SCRIPT"
+"<SCRIPT"             return "<script"
+"</SCRIPT"              return "</script"
 "<style"                return "<style"
 "</style"               return "</style"
+"<STYLE"                return "<style"
+"</STYLE"               return "</style"
 "<area"               return "<area"
 "<base"               return "<base"
 "<br"                 return "<br"
@@ -64,7 +70,7 @@ function fillActions(actions, errors) {
 "<param"              return "<param"
 "<source"             return "<source"
 [0-9]                 return 'ASCII_Digit'
-[A-Za-z]              return 'ASCII_Initial_Char'
+[A-Za-z_]              return 'ASCII_Initial_Char'
 "-"                   return 'HYPHON'
 "</"                  return "</"
 "/>"                  return "/>"
@@ -147,8 +153,6 @@ keyword
 	| "/>"
 	| "</"
 	| "<!--"
-	| "<!--[if lte IE 8]>"
-	| "<![endif]-->"
 	| "-->"
 	;
 
@@ -327,6 +331,8 @@ unicodeAlphaNumHyph
 	| unicodeAlphaNumHyph DOT ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
 	| unicodeAlphaNumHyph "+" ASCII_Digit ${actions.unicodeAlphaNumHyphHyphenDigitSeq || "{}"}
 	| unicodeAlphaNumHyph "+" ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
+	| unicodeAlphaNumHyph ":" ASCII_Digit ${actions.unicodeAlphaNumHyphHyphenDigitSeq || "{}"}
+	| unicodeAlphaNumHyph ":" ASCII_Initial_Char ${actions.unicodeAlphaNumHyphHyphenInitialSeq || "{}"}
 	;
 
 initialFirstUnicodeAlphanumeric
@@ -340,6 +346,7 @@ initialFirstAlphaNumHyph
 	| ASCII_Initial_Char HYPHON unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
 	| ASCII_Initial_Char DOT unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
 	| ASCII_Initial_Char "+" unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
+	| ASCII_Initial_Char ":" unicodeAlphaNumHyph ${actions.initialFirstAlphaNumHyphHyphonSeq || "{}"}
 	;
 
 docTypeTag
@@ -381,12 +388,72 @@ htmlVoidTagHead
 		;
 
 htmlComment
-	: "<!--" maybeHtmlDom "-->" ${actions.htmlComment || "{}"}
+	: "<!--" commentString "-->" ${actions.htmlComment || "{}"}
 	;
 
-ieDirective
-	: "<!--[if lte IE 8]>" maybeHtmlDom "<![endif]-->" ${actions.ieDirective || "{}"}
+commentString
+	: /**/ ${actions.commentEpsilon || "{}"}
+	| commentString commentToken ${actions.comment || "{}"}
+	| commentString htmlComment ${actions.comment || "{}"}
+	| commentString White_Space_Char ${actions.comment || "{}"}
 	;
+
+commentToken
+    : "<!DOCTYPE"
+    | "<div"
+    | "</div"
+    | "<esi:eval"
+    | "<esi:function"
+    | "</esi:function"
+    | "<esi:foreach"
+    | "</esi:foreach"
+    | "<esi:remove"
+    | "</esi:remove"
+    | "<esi:comment"
+    | "<esi:include"
+    | "<esi:return"
+    | "<esi:assign"
+    | "<esi:choose"
+    | "<esi:when"
+    | "<esi:otherwise"
+    | "</esi:otherwise"
+    | "<esi:vars"
+    | "<esi:inline"
+    | "<esi:try"
+    | "<esi:attempt"
+    | "<esi:except"
+    | "</esi:try"
+    | "</esi:attempt"
+    | "</esi:except"
+    | "</esi:inline"
+    | "</esi:choose"
+    | "</esi:when"
+    | "</esi:vars"
+    | htmlVoidTagOpenings
+    | "<script"
+    | "<SCRIPT"
+		| "</script"
+		| "</SCRIPT"
+    | "<style"
+    | "</style"
+    | ASCII_Digit
+    | ASCII_Initial_Char
+    | HYPHON
+    | "</"
+    | "/>"
+    | "<"
+    | ">"
+    | SLASH
+    | FULLY_ESCAPED
+    | ESCAPE_PUNC
+    | DOUBLE_QUOTE
+    | SINGLE_QUOTE
+    | ":"
+    | "="
+    | Unknown_Char
+    | DOT
+    | "+"
+    ;
 
 maybeHtmlDom
 	: nonTagedString ${actions.maybeHtmlDomNonTagedString || "{}"}
@@ -396,7 +463,6 @@ maybeHtmlDom
 	| maybeHtmlDom htmlComment nonTagedString ${actions.maybeHtmlDomHtmlCommentDomElement || "{}"}
 	| maybeHtmlDom scriptTagElement nonTagedString ${actions.maybeHtmlDomScriptTagDomElement || "{}"}
 	| maybeHtmlDom styleTagElement nonTagedString ${actions.maybeHtmlDomStyleDomElement || "{}"}
-	| maybeHtmlDom ieDirective nonTagedString ${actions.maybeHtmlDomIEDirective || "{}"}
 	;
 
 htmlDomElement
@@ -409,8 +475,6 @@ jsStringToken
 	: White_Space_Char
 	| "<!DOCTYPE"
 	| "<!--"
-	| "<!--[if lte IE 8]>"
-	| "<![endif]-->"
 	| "-->"
 	| "<div"
 	| "</div"
@@ -488,8 +552,6 @@ cssStringToken
 	| "</div"
 	| htmlVoidTagOpenings
 	| "<!--"
-	| "<!--[if lte IE 8]>"
-	| "<![endif]-->"
 	| "-->"
 	| "<esi:comment"
 	| "<esi:include"
@@ -556,7 +618,8 @@ styleTagTail
 
 divElement
 		: "<div" attributeStartClose maybeHtmlDom "</div" optionalWhiteSpaceString ">" ${actions.divElement || "{}"}
-		${errors.divElement ? "| \"<div\" attributeStartClose maybeHtmlDom error optionalWhiteSpaceString \">\" " + errors.divElement + "\n\t" : "" };
+		${errors.divElement ? "| \"<div\" attributeStartClose maybeHtmlDom error optionalWhiteSpaceString \">\" " + errors.divElement + "\n\t" : "" }
+		;
 
 escapedAttribute
 		: initialFirstAlphaNumHyph "=" escapedString ${actions.escapedAttribute || "{}"}

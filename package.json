@@ -19,5 +19,9 @@
   "dependencies": {
     "jison": "^0.4.17",
     "js-beautify": "^1.6.12"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0"
   }
 }

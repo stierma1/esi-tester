@@ -2,6 +2,7 @@ var builder = require("./esi-gammar-builder");
 var fs = require("fs");
 var path = require("path");
 var jison = require("jison");
+var processTemplate = require("./process-template");
 
 var builders = [
     function buildValidatorGrammar() {
@@ -51,4 +52,5 @@ for (var i in builders) {
     fs.writeFileSync(path.join(__dirname, "./parser-grammars/" + construct.name + ".y"), construct.grammar);
     var generator = new jison.Generator(construct.grammar, {});
     fs.writeFileSync(path.join(__dirname, "./parsers/" + construct.name + ".js"), generator.generate());
+    fs.writeFileSync(path.join(__dirname, "./parsers/process-" + construct.name + ".js"), processTemplate(construct.name));
 }
