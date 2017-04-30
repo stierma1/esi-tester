@@ -1,6 +1,6 @@
 
 module.exports = {
-  preprocessor: require("./pre-processor").parse,
+  preprocessor: require("./pre-processor"),
   DIV_REPORTER:require("./parsers/process-div-reporter").parse,
   HTML_AST: require("./parsers/process-html-ast").parse,
   GENERIC: require("./parsers/process-generic-actions").parse,
