@@ -3,6 +3,7 @@ function buildParserProcessor(parserModule){
   return `
   var parserModule = require('./${parserModule}');
   var preprocess = require('../pre-processor');
+  process._silentParsers = true;
 
   exports.parse = function (...args) {
     var [data, ...opts] = args;
@@ -10,6 +11,7 @@ function buildParserProcessor(parserModule){
     return parserModule.parse.apply(parserModule.parser, [preProced, ...opts]);
   };
   exports.main = function commonjsMain(args) {
+
       if (!args[1]) {
           console.log('Usage: '+args[0]+' FILE');
           process.exit(1);
@@ -18,6 +20,7 @@ function buildParserProcessor(parserModule){
       return exports.parse(source);
   };
   if (typeof module !== 'undefined' && require.main === module) {
+    process._silentParsers = false;
     exports.main(process.argv.slice(1));
   }
   `

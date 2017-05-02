@@ -33,8 +33,9 @@ var actionFuncs = {
 			inner: $2,
 		 // raw: // $1.raw + $2.raw
 		}
-
-		console.log(JSON.stringify($$, null,2))
+		if(!process._silentParsers)
+			console.log(JSON.stringify($$, null,2));
+		return $$
 	},
 	/*{
 		"productions": "\/**\/",
