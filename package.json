@@ -1,5 +1,5 @@
 {
-  "name": "html-parser",
+  "name": "html-jison-parsing",
   "version": "1.0.0",
   "description": "",
   "main": "export.js",
